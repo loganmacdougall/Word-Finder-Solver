@@ -1,0 +1,5 @@
+# Don't include any builds
+main
+
+# Don't include any C object files
+*.o
