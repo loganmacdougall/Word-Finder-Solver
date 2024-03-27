@@ -33,12 +33,12 @@ void linkedlist_push_back(LinkedList *list, void *data) {
   list->length++;
 }
 
-void *linkedlist_pop_front(LinkedList *list) {
+void **linkedlist_pop_front(LinkedList *list) {
   if (list->length == 0)
     return NULL;
 
   LinkedListNode *node = list->head;
-  void *data = node->data;
+  void **data = node->data;
   list->head = node->next;
   free(node);
   list->length--;

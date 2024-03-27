@@ -35,6 +35,8 @@ Queue *find_possible_words(Unscrabbler *solver, char *knowledge) {
   _unscrabbler_find_possible_words_rec(solver->tree->head, solver->alphabet,
                                        knowledge, found, word, 0);
 
+  free(word);
+
   return found;
 }
 
@@ -52,7 +54,7 @@ void _unscrabbler_find_possible_words_rec(PrefixTreeNode *node,
     if (node->isWord) {
       char *word_cpy = malloc(sizeof(char) * (wordlen + 1));
       strcpy(word_cpy, word);
-      queue_push(found, word_cpy);
+      queue_push(found, &word_cpy);
     }
     return;
   }

@@ -41,8 +41,10 @@ int main() {
       puts("\n-- Solutions --");
     }
     while (!queue_empty(found)) {
-      char *word = queue_pop(found);
+      void **word_ptr = queue_pop(found);
+      char *word = (char *)(*word_ptr);
       printf("  %s\n", word);
+      free(word_ptr);
       free(word);
     }
     puts("");
