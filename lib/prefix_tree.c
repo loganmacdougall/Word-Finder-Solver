@@ -50,7 +50,7 @@ PrefixTreeNode *_prefix_tree_init_node() {
 
   node->isWord = false;
   // Calloc initilzies memory to all 0s
-  node->nextLetters = calloc(25, sizeof(&node));
+  node->nextLetters = calloc(NUM_OF_LETTERS, sizeof(&node));
 
   return node;
 }

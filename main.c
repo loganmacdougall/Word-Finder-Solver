@@ -1,16 +1,15 @@
-#include "lib/prefix_tree.h"
+#include "lib/queue.h"
+#include "lib/unscrabbler.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
 #define QUIT_CODE 1
 
-PrefixTree *setup_dictionary_tree();
 void get_alphabet(char *buffer);
 void get_knowledge(char *buffer);
 void print_startup_text();
 void print_help_text();
-bool string_eq(char *s1, char *s2);
 
 int main() {
 
@@ -18,7 +17,7 @@ int main() {
   // prevent buffer overflow attacks for this code.
   char alphabetBuffer[200];
   char knowledgeBuffer[50];
-  PrefixTree *dict = setup_dictionary_tree();
+  Unscrabbler *solver = unscrabbler_init("dictionary.txt");
 
   print_startup_text();
 
@@ -27,31 +26,32 @@ int main() {
     if (alphabetBuffer[0] == QUIT_CODE)
       break;
 
+    unscrabbler_set_alphabet(solver, alphabetBuffer);
+
     get_knowledge(knowledgeBuffer);
     if (knowledgeBuffer[0] == QUIT_CODE)
       break;
 
-    if (prefix_tree_has_word(dict, knowledgeBuffer)) {
-      printf("Found word\n");
+    Queue *found = find_possible_words(solver, knowledgeBuffer);
+
+    if (queue_empty(found)) {
+      puts("\nNo solutions found");
     } else {
-      printf("Didn't find word\n");
+      puts("\n-- Solutions --");
     }
+    while (!queue_empty(found)) {
+      char *word = queue_pop(found);
+      printf("  %s\n", word);
+      free(word);
+    }
+    puts("");
+
+    queue_destroy(found);
   }
 
+  unscrabbler_destroy(solver);
+
   return 0;
-}
-
-PrefixTree *setup_dictionary_tree() {
-  PrefixTree *dict = prefix_tree_init();
-
-  prefix_tree_add_word(dict, "hello");
-  prefix_tree_add_word(dict, "hell");
-  prefix_tree_add_word(dict, "howdy");
-  prefix_tree_add_word(dict, "how");
-  prefix_tree_add_word(dict, "hat");
-  prefix_tree_add_word(dict, "world");
-
-  return dict;
 }
 
 void get_alphabet(char *buffer) {
