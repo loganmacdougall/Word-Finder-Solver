@@ -107,8 +107,8 @@ void print_startup_text() {
   puts("---- SCRABBLE SOLVER ----");
   puts("-------------------------\n\n");
 
-  puts("Type \"help\" for more information");
-  puts("Type \"quit\" when you're finished\n");
+  puts("Type \"!help\" for more information");
+  puts("Type \"!quit\" when you're finished\n");
 }
 
 void print_help_text() {
