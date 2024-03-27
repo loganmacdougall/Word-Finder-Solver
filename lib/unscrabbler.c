@@ -17,6 +17,8 @@ Unscrabbler *unscrabbler_init(char *dict_filename) {
     prefix_tree_add_word(solver->tree, buffer);
   }
 
+  fclose(dict_file);
+
   return solver;
 }
 
