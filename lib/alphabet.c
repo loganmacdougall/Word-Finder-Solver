@@ -5,6 +5,13 @@ Alphabet *alphabet_init(char *string) {
 
   memset(alphabet->alphabet, 0, 26 * sizeof(*alphabet->alphabet));
 
+  for (int i = 0; string[i] != '\0'; i++) {
+    char letter = string[i];
+    if (letter < 'a' || letter > 'z')
+      continue;
+    alphabet_add_letter(alphabet, letter);
+  }
+
   return alphabet;
 }
 

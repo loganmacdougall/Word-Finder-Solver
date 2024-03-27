@@ -30,6 +30,9 @@ Queue *find_possible_words(Unscrabbler *solver, char *knowledge) {
   Queue *found = queue_init(sizeof(char *));
   char *word = calloc(strlen(knowledge) + 1, sizeof(*word));
 
+  _unscrabbler_find_possible_words_rec(solver->tree->head, solver->alphabet,
+                                       knowledge, found, word, 0);
+
   return found;
 }
 
@@ -45,16 +48,20 @@ void _unscrabbler_find_possible_words_rec(PrefixTreeNode *node,
                                           int wordlen) {
   if (knowledge[0] == '\0') {
     if (node->isWord) {
-      char *word_cpy = _unscrabbler_strrev(word, wordlen);
+      char *word_cpy = malloc(sizeof(char) * (wordlen + 1));
       strcpy(word_cpy, word);
       queue_push(found, word_cpy);
     }
     return;
   }
 
-  for (int i = 0; i < NUM_OF_LETTERS; i++) {
-    char letter = 'a' + i;
-    if (alphabet_has_letter(alphabet, letter)) {
+  if (knowledge[0] == '*') {
+    for (int i = 0; i < NUM_OF_LETTERS; i++) {
+      char letter = 'a' + i;
+      if (!alphabet_has_letter(alphabet, letter))
+        continue;
+      if (node->nextLetters[i] == NULL)
+        continue;
       alphabet_sub_letter(alphabet, letter);
       word[wordlen] = letter;
       _unscrabbler_find_possible_words_rec(node->nextLetters[i], alphabet,
@@ -62,14 +69,18 @@ void _unscrabbler_find_possible_words_rec(PrefixTreeNode *node,
                                            wordlen + 1);
       alphabet_add_letter(alphabet, letter);
     }
+    return;
   }
-}
 
-char *_unscrabbler_strrev(char *str, int len) {
-  char *rev = malloc(sizeof(char) * (len + 1));
-  rev[len] = '\0';
-  for (int i = 0; i < len; i++) {
-    rev[i] = str[len - i - 1];
-  }
-  return rev;
+  char letter = knowledge[0];
+  if (!alphabet_has_letter(alphabet, letter))
+    return;
+  if (node->nextLetters[letter - 'a'] == NULL)
+    return;
+  alphabet_sub_letter(alphabet, letter);
+  word[wordlen] = letter;
+  _unscrabbler_find_possible_words_rec(node->nextLetters[letter - 'a'],
+                                       alphabet, &knowledge[1], found, word,
+                                       wordlen + 1);
+  alphabet_add_letter(alphabet, letter);
 }

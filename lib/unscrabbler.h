@@ -21,6 +21,5 @@ void _unscrabbler_find_possible_words_rec(PrefixTreeNode *node,
                                           Alphabet *alphabet, char *knowledge,
                                           Queue *found, char *word,
                                           int wordlen);
-char *_unscrabbler_strrev(char *str, int len);
 
 #endif

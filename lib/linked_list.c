@@ -41,6 +41,7 @@ void *linkedlist_pop_front(LinkedList *list) {
   void *data = node->data;
   list->head = node->next;
   free(node);
+  list->length--;
 
   return data;
 }
@@ -62,7 +63,7 @@ void _linkedlist_put_first_element(LinkedList *list, void *data) {
     return;
 
   list->head = _linkedlist_init_node(data, list->element_size);
-  list->tail = list->tail;
+  list->tail = list->head;
   list->length = 1;
 }
 
