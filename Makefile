@@ -1,5 +1,5 @@
 COMP=gcc -g
-DEPS=prefix_tree.o alphabet.o linked_list.o queue.o unscrabbler.o
+DEPS=prefix_tree.o alphabet.o linked_list.o queue.o array_list.o unscrabbler.o
 
 main : main.c  $(DEPS)
 		$(COMP) main.c $(DEPS) -o main
@@ -15,6 +15,9 @@ linked_list.o : lib/linked_list.c lib/linked_list.h
 
 queue.o : lib/queue.c lib/queue.h
 		$(COMP) lib/queue.c -c -o queue.o
+
+array_list.o : lib/array_list.c lib/array_list.h
+		$(COMP) lib/array_list.c -c -o array_list.o
 
 unscrabbler.o : lib/unscrabbler.c lib/unscrabbler.h
 		$(COMP) lib/unscrabbler.c -c -o unscrabbler.o

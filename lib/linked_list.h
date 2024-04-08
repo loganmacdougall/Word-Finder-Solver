@@ -19,7 +19,7 @@ LinkedList *linkedlist_init(int element_size);
 int linkedlist_length(LinkedList *list);
 void linkedlist_push_front(LinkedList *list, void *data);
 void linkedlist_push_back(LinkedList *list, void *data);
-void **linkedlist_pop_front(LinkedList *list);
+void *linkedlist_pop_front(LinkedList *list);
 void linkedlist_destroy(LinkedList *list);
 
 void _linkedlist_put_first_element(LinkedList *list, void *data);
