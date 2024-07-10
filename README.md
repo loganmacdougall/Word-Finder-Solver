@@ -1,6 +1,6 @@
-# Unscrabbler
+# Word Finder Solver
 
-This will solve scrabble words for you.
+This will solve for words in any "Word Finder" game.
 
 ## Build
 Clone the repo and then run in the directory
