@@ -1,3 +1,4 @@
+#include "lib/heap.h"
 #include "lib/queue.h"
 #include "lib/unscrabbler.h"
 #include <stdbool.h>
@@ -33,23 +34,36 @@ int main() {
     if (knowledgeBuffer[0] == QUIT_CODE)
       break;
 
-    Queue *found = find_possible_words(solver, knowledgeBuffer);
+    Heap *found = find_possible_words(solver, knowledgeBuffer);
 
-    if (queue_empty(found)) {
+    if (heap_length(found) == 0) {
       puts("\nNo solutions found");
     } else {
       puts("\n-- Solutions --");
     }
-    while (!queue_empty(found)) {
-      void **word_ptr = queue_pop(found);
-      char *word = (char *)(*word_ptr);
-      printf("  %s\n", word);
-      free(word_ptr);
-      free(word);
-    }
-    puts("");
 
-    queue_destroy(found);
+    static char *white_bold = "\e[1;97m";
+    static char *default_color = "\e[0m";
+    static char *black_bold = "\e[1;90m";
+
+    while (heap_length(found) != 0) {
+      WeightedWord *ww = heap_pop(found);
+
+      char *color;
+      if (ww->weight > 2000000)
+        color = white_bold;
+      else if (ww->weight < 350000)
+        color = black_bold;
+      else
+        color = default_color;
+
+      printf("  %s%s\n", color, ww->word);
+      free(ww->word);
+      free(ww);
+    }
+    puts("\e[0m");
+
+    heap_destroy(found);
   }
 
   unscrabbler_destroy(solver);

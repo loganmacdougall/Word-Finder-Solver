@@ -8,7 +8,7 @@ PrefixTree *prefix_tree_init() {
   return tree;
 }
 
-void prefix_tree_add_word(PrefixTree *tree, char *word, unsigned int value) {
+void prefix_tree_add_word(PrefixTree *tree, char *word, unsigned long value) {
   PrefixTreeNode *node = tree->head;
   char *restOfWord = word;
   int nextLetterIndex = -1;

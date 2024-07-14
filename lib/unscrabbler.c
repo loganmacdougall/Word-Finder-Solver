@@ -2,17 +2,16 @@
 #include "alphabet.h"
 #include "heap.h"
 #include "prefix_tree.h"
-#include "queue.h"
-
-typedef struct _WeightedWord {
-  char *word;
-  unsigned int weight;
-} WeightedWord;
 
 int compare_weighted_words(void *a, void *b) {
   WeightedWord *aw = (WeightedWord *)a;
   WeightedWord *bw = (WeightedWord *)b;
-  return (int)aw->weight - (int)bw->weight;
+  long r = (long)aw->weight - (long)bw->weight;
+  if (r > 0)
+    return 1;
+  if (r < 0)
+    return -1;
+  return 0;
 }
 
 Unscrabbler *unscrabbler_init(char *dict_filename) {
@@ -33,7 +32,7 @@ Unscrabbler *unscrabbler_init(char *dict_filename) {
       ;
     buffer[i] = '\n';
 
-    unsigned int value = atoi(&buffer[i + 1]);
+    unsigned long value = atol(&buffer[i + 1]);
     prefix_tree_add_word(solver->tree, buffer, value);
   }
 
@@ -48,24 +47,16 @@ void unscrabbler_set_alphabet(Unscrabbler *solver, char *alphabet_str) {
   solver->alphabet = alphabet_init(alphabet_str);
 }
 
-Queue *find_possible_words(Unscrabbler *solver, char *knowledge) {
+Heap *find_possible_words(Unscrabbler *solver, char *knowledge) {
   Heap *word_sorter = heap_init(sizeof(WeightedWord), compare_weighted_words);
-  Queue *found = queue_init(sizeof(char *));
   char *word = calloc(strlen(knowledge) + 1, sizeof(*word));
 
   _unscrabbler_find_possible_words_rec(solver->tree->head, solver->alphabet,
                                        knowledge, word_sorter, word, 0);
 
-  while (heap_length(word_sorter) > 0) {
-    WeightedWord *ww = heap_pop(word_sorter);
-    queue_push(found, &ww->word);
-    free(ww);
-  }
-
-  heap_destroy(word_sorter);
   free(word);
 
-  return found;
+  return word_sorter;
 }
 
 void unscrabbler_destroy(Unscrabbler *solver) {

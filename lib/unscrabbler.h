@@ -13,9 +13,14 @@ typedef struct _Unscrabbler {
   Alphabet *alphabet;
 } Unscrabbler;
 
+typedef struct _WeightedWord {
+  char *word;
+  unsigned long weight;
+} WeightedWord;
+
 Unscrabbler *unscrabbler_init(char *dict_filename);
 void unscrabbler_set_alphabet(Unscrabbler *solver, char *alphabet_str);
-Queue *find_possible_words(Unscrabbler *solver, char *knowledge);
+Heap *find_possible_words(Unscrabbler *solver, char *knowledge);
 void unscrabbler_destroy(Unscrabbler *solver);
 
 void _unscrabbler_find_possible_words_rec(PrefixTreeNode *node,
