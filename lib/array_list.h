@@ -16,8 +16,12 @@ ArrayList *arraylist_init_set_capacity(int element_size, int capacity);
 int arraylist_length(ArrayList *list);
 void arraylist_push_front(ArrayList *list, void *data);
 void arraylist_push_back(ArrayList *list, void *data);
-void *arraylist_pop_front(ArrayList *list, void *data);
-void *arraylist_pop_back(ArrayList *list, void *data);
+void *arraylist_pop_front(ArrayList *list);
+void *arraylist_pop_back(ArrayList *list);
+void *arraylist_get(ArrayList *list, int i);
+void arraylist_set(ArrayList *list, void *data, int i);
+void arraylist_swap(ArrayList *list, int i, int j);
+void arraylist_destroy(ArrayList *list);
 
 bool _arraylist_full(ArrayList *list);
 void _arraylist_resize(ArrayList *list);

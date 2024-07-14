@@ -2,6 +2,7 @@
 #define __HEADER_UNSCRABBLER
 
 #include "alphabet.h"
+#include "heap.h"
 #include "prefix_tree.h"
 #include "queue.h"
 #include <stdio.h>
@@ -19,7 +20,7 @@ void unscrabbler_destroy(Unscrabbler *solver);
 
 void _unscrabbler_find_possible_words_rec(PrefixTreeNode *node,
                                           Alphabet *alphabet, char *knowledge,
-                                          Queue *found, char *word,
+                                          Heap *word_sorter, char *word,
                                           int wordlen);
 
 #endif

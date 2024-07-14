@@ -8,7 +8,7 @@
 
 typedef struct _PrefixTreeNode {
   struct _PrefixTreeNode **nextLetters;
-  bool isWord;
+  unsigned int value;
 } PrefixTreeNode;
 
 typedef struct _PrefixTree {
@@ -16,8 +16,8 @@ typedef struct _PrefixTree {
 } PrefixTree;
 
 PrefixTree *prefix_tree_init();
-void prefix_tree_add_word(PrefixTree *tree, char *word);
-bool prefix_tree_has_word(PrefixTree *tree, char *word);
+void prefix_tree_add_word(PrefixTree *tree, char *word, unsigned int value);
+unsigned int prefix_tree_has_word(PrefixTree *tree, char *word);
 void prefix_tree_destroy(PrefixTree *tree);
 
 PrefixTreeNode *_prefix_tree_init_node();

@@ -1,9 +1,22 @@
 #include "unscrabbler.h"
 #include "alphabet.h"
+#include "heap.h"
 #include "prefix_tree.h"
+#include "queue.h"
+
+typedef struct _WeightedWord {
+  char *word;
+  unsigned int weight;
+} WeightedWord;
+
+int compare_weighted_words(void *a, void *b) {
+  WeightedWord *aw = (WeightedWord *)a;
+  WeightedWord *bw = (WeightedWord *)b;
+  return (int)aw->weight - (int)bw->weight;
+}
 
 Unscrabbler *unscrabbler_init(char *dict_filename) {
-  static char buffer[50];
+  static char buffer[60];
 
   Unscrabbler *solver = malloc(sizeof(*solver));
   solver->tree = prefix_tree_init();
@@ -13,8 +26,15 @@ Unscrabbler *unscrabbler_init(char *dict_filename) {
   if (dict_file == NULL)
     return NULL;
 
-  while (fgets(buffer, 50, dict_file) != NULL) {
-    prefix_tree_add_word(solver->tree, buffer);
+  while (fgets(buffer, 60, dict_file) != NULL) {
+    int i = 0;
+
+    for (; buffer[i] != '\t'; i++)
+      ;
+    buffer[i] = '\n';
+
+    unsigned int value = atoi(&buffer[i + 1]);
+    prefix_tree_add_word(solver->tree, buffer, value);
   }
 
   fclose(dict_file);
@@ -29,12 +49,20 @@ void unscrabbler_set_alphabet(Unscrabbler *solver, char *alphabet_str) {
 }
 
 Queue *find_possible_words(Unscrabbler *solver, char *knowledge) {
+  Heap *word_sorter = heap_init(sizeof(WeightedWord), compare_weighted_words);
   Queue *found = queue_init(sizeof(char *));
   char *word = calloc(strlen(knowledge) + 1, sizeof(*word));
 
   _unscrabbler_find_possible_words_rec(solver->tree->head, solver->alphabet,
-                                       knowledge, found, word, 0);
+                                       knowledge, word_sorter, word, 0);
 
+  while (heap_length(word_sorter) > 0) {
+    WeightedWord *ww = heap_pop(word_sorter);
+    queue_push(found, &ww->word);
+    free(ww);
+  }
+
+  heap_destroy(word_sorter);
   free(word);
 
   return found;
@@ -48,13 +76,15 @@ void unscrabbler_destroy(Unscrabbler *solver) {
 
 void _unscrabbler_find_possible_words_rec(PrefixTreeNode *node,
                                           Alphabet *alphabet, char *knowledge,
-                                          Queue *found, char *word,
+                                          Heap *word_sorter, char *word,
                                           int wordlen) {
   if (knowledge[0] == '\0') {
-    if (node->isWord) {
-      char *word_cpy = malloc(sizeof(char) * (wordlen + 1));
-      strcpy(word_cpy, word);
-      queue_push(found, &word_cpy);
+    if (node->value > 0) {
+      WeightedWord ww;
+      ww.word = malloc(sizeof(char) * (wordlen + 1));
+      strcpy(ww.word, word);
+      ww.weight = node->value;
+      heap_push(word_sorter, &ww);
     }
     return;
   }
@@ -69,7 +99,7 @@ void _unscrabbler_find_possible_words_rec(PrefixTreeNode *node,
       alphabet_sub_letter(alphabet, letter);
       word[wordlen] = letter;
       _unscrabbler_find_possible_words_rec(node->nextLetters[i], alphabet,
-                                           &knowledge[1], found, word,
+                                           &knowledge[1], word_sorter, word,
                                            wordlen + 1);
       alphabet_add_letter(alphabet, letter);
     }
@@ -84,7 +114,7 @@ void _unscrabbler_find_possible_words_rec(PrefixTreeNode *node,
   alphabet_sub_letter(alphabet, letter);
   word[wordlen] = letter;
   _unscrabbler_find_possible_words_rec(node->nextLetters[letter - 'a'],
-                                       alphabet, &knowledge[1], found, word,
-                                       wordlen + 1);
+                                       alphabet, &knowledge[1], word_sorter,
+                                       word, wordlen + 1);
   alphabet_add_letter(alphabet, letter);
 }

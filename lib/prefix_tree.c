@@ -8,7 +8,7 @@ PrefixTree *prefix_tree_init() {
   return tree;
 }
 
-void prefix_tree_add_word(PrefixTree *tree, char *word) {
+void prefix_tree_add_word(PrefixTree *tree, char *word, unsigned int value) {
   PrefixTreeNode *node = tree->head;
   char *restOfWord = word;
   int nextLetterIndex = -1;
@@ -21,10 +21,10 @@ void prefix_tree_add_word(PrefixTree *tree, char *word) {
     restOfWord = &restOfWord[1];
   }
 
-  node->isWord = true;
+  node->value = value;
 }
 
-bool prefix_tree_has_word(PrefixTree *tree, char *word) {
+unsigned int prefix_tree_has_word(PrefixTree *tree, char *word) {
   PrefixTreeNode *node = tree->head;
   char *restOfWord = word;
   int nextLetterIndex = -1;
@@ -37,7 +37,7 @@ bool prefix_tree_has_word(PrefixTree *tree, char *word) {
     restOfWord = &restOfWord[1];
   }
 
-  return node->isWord;
+  return node->value;
 }
 
 void prefix_tree_destroy(PrefixTree *tree) {
@@ -48,7 +48,7 @@ void prefix_tree_destroy(PrefixTree *tree) {
 PrefixTreeNode *_prefix_tree_init_node() {
   PrefixTreeNode *node = malloc(sizeof(*node));
 
-  node->isWord = false;
+  node->value = 0;
   // Calloc initilzies memory to all 0s
   node->nextLetters = calloc(NUM_OF_LETTERS, sizeof(&node));
 

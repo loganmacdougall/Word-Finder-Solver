@@ -17,7 +17,7 @@ int main() {
   // prevent buffer overflow attacks for this code.
   char alphabetBuffer[200];
   char knowledgeBuffer[50];
-  Unscrabbler *solver = unscrabbler_init("dictionary.txt");
+  Unscrabbler *solver = unscrabbler_init("dictionary_plus_analysis.txt");
 
   print_startup_text();
 
